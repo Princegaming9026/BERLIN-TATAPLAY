@@ -15,3 +15,5 @@ https://bpweb4.akamaized.net/bpk-tv/irdeto_com_Channel_209/output/manifest.mpd
 #EXTINF:-1 tvg-id="" tvg-name="Tata Play Beauty" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-12282-ja02jlp4-v2/imageContent-12282-ja02jlp4-m2.png",Tata Play Beauty
 #EXT-X-KEY:METHOD=SAMPLE-AES,URI="data:text/plain;base64,oAOzoWbLiN5lNWEA3R7kvw"
 https://bpweb5.akamaized.net/bpk-tv/irdeto_com_Channel_853/output/manifest.mpd
+
+<a href="http://t.me/BERLIN_IS_BERLIN">BERLIN</a>
