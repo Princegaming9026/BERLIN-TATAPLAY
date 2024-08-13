@@ -76,11 +76,31 @@
             }
         }
 
+        async function checkProxy(proxy, url) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 seconds timeout
+
+            try {
+                const response = await fetch(url, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    mode: 'cors', // Change to 'cors' to allow CORS requests
+                    headers: {
+                        'Proxy-Authorization': `Basic ${btoa(proxy)}` // Use this if your proxy requires authentication
+                    },
+                    // Note: You cannot set a proxy through fetch directly in the browser.
+                });
+                clearTimeout(timeoutId);
+                return response.ok; // Check if the response is successful
+            } catch (error) {
+                return false; // Return false if there was an error
+            }
+        }
+
         async function checkProxies() {
             const name = document.getElementById("name").value;
             const proxyType = document.getElementById("proxyType").value;
             const url = document.getElementById("url").value;
-            const threads = parseInt(document.getElementById("threads").value);
             const resultDiv = document.getElementById("result");
             const downloadLink = document.getElementById("downloadLink");
 
@@ -101,41 +121,35 @@
             resultDiv.innerHTML = "";
             downloadLink.style.display = 'none';  // Hide download link initially
 
-            // Simulate checking all proxies
-            const promises = proxies.map((proxy) => {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        // Simulate checking
-                        const isSuccess = Math.random() > 0.5; // Randomly determine success or failure
-                        if (isSuccess) {
-                            workingProxies.push(proxy);
-                            successCount++;
-                        } else {
-                            failCount++;
-                        }
-                        resolve();
-                    }, 1000 * (Math.random() + 0.5)); // Random delay for demonstration
-                });
+            // Check each proxy against the provided URL
+            const promises = proxies.map(async (proxy) => {
+                const isSuccess = await checkProxy(proxy, url);
+                if (isSuccess) {
+                    workingProxies.push(proxy);
+                    successCount++;
+                } else {
+                    failCount++;
+                }
             });
 
             // Wait for all checks to complete
-            Promise.all(promises).then(() => {
-                // Update results
-                resultDiv.innerHTML = `
-                    Total SUCCESS: <span class="success">${successCount}</span><br>
-                    Total FAIL: <span class="fail">${failCount}</span>
-                `;
+            await Promise.all(promises);
+            
+            // Update results
+            resultDiv.innerHTML = `
+                Total SUCCESS: <span class="success">${successCount}</span><br>
+                Total FAIL: <span class="fail">${failCount}</span>
+            `;
 
-                // Create a downloadable text file with working proxies
-                if (successCount > 0) {
-                    const blob = new Blob([workingProxies.join('\n')], { type: 'text/plain' });
-                    const url = URL.createObjectURL(blob);
-                    downloadLink.href = url;
-                    downloadLink.style.display = 'inline';  // Show download link
-                } else {
-                    downloadLink.style.display = 'none';  // Hide if no working proxies
-                }
-            });
+            // Create a downloadable text file with working proxies
+            if (successCount > 0) {
+                const blob = new Blob([workingProxies.join('\n')], { type: 'text/plain' });
+                const urlBlob = URL.createObjectURL(blob);
+                downloadLink.href = urlBlob;
+                downloadLink.style.display = 'inline';  // Show download link
+            } else {
+                downloadLink.style.display = 'none';  // Hide if no working proxies
+            }
         }
     </script>
 </body>
