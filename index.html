@@ -1,247 +1,142 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LiveTV WEB</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
-
+    <title>Proxy Checker</title>
     <style>
-      @import url('https://fonts.googleapis.com/css2?family=Playwrite+GB+S&family=Signika+Negative:wght@300..700&display=swap');
-
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --text-color: #ecf0f1;
-            --accent-color: #e74c3c;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-          font-family: "Signika Negative",'Roboto', sans-serif;
-          background-color: var(--primary-color);
-            color: var(--text-color);
-            line-height: 1.6;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: black; /* Black background */
+            color: white; /* White text */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center elements */
         }
-
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            padding: 2rem 0;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        h1 {
+            margin-bottom: 20px;
         }
-
-        .header h1 {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            /*text-transform: uppercase;*/
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        .success {
+            color: green;
         }
-
-        .header__telegram {
-    display: inline-block;
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(10px);
-    padding: 0.8rem 1.5rem;
-    border-radius: 50px;
-    text-decoration: none;
-    color: var(--text-color);
-    font-weight: 600;
-    transition: all 0.3s ease;
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    animation: fadeIn 0.5s ease-out 0.3s both;
-  }
-  
-  .header__telegram:hover {
-    background: rgba(255, 255, 255, 0.25);
-    transform: translateY(-3px);
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  .header__telegram-icon {
-    width: 24px;
-    height: 24px;
-    margin-right: 8px;
-    vertical-align: middle;
-    scale: 1.3;
-  }
-
-        .search-container {
-            max-width: 600px;
-            margin: 2rem auto;
-            padding: 0 1rem;
+        .fail {
+            color: red;
         }
-
-        #search {
-            width: 100%;
-            padding: 1rem;
-            border: none;
-            border-radius: 25px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            font-size: 1rem;
-            transition: all 0.3s ease;
+        #downloadLink {
+            display: none;
+            margin-top: 20px;
+            padding: 10px 15px;
+            background-color: #4CAF50; /* Green background */
+            color: white; /* White text */
+            border: none; /* No border */
+            border-radius: 5px; /* Rounded corners */
+            text-decoration: none; /* No underline */
+            cursor: pointer; /* Pointer cursor on hover */
         }
-
-        #search:focus {
-            outline: none;
-            background-color: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 0 0 2px var(--secondary-color);
+        #downloadLink:hover {
+            background-color: #45a049; /* Darker green on hover */
         }
-
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-            gap: 1rem;
-            padding: 0 2rem;
-            max-width: 1300px; 
-            margin: 0 auto;
+        input, select, button {
+            margin: 10px 0; /* Spacing between elements */
+            padding: 10px;
+            width: 300px; /* Consistent width */
         }
-
-        .channel-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .channel-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .channel-card img {
-            width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-bottom: 2px solid var(--secondary-color);
-        }
-        .channel-card a {
-            text-decoration: none;
-        }
-        .channel-info {
-            padding: 0.2rem;
-        }
-
-        .channel-title {
-           font-size: 1.1rem;
-           font-weight: bold;
-           text-align: center;
-           margin-bottom: 0.5rem;
-           /*color: var(--secondary-color);*/
-           color: #38ff19;
-        }
-
-        footer {
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: 3rem;
-         /*   background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));   */
-        }
-
-        footer a {
-            color: var(--accent-color);
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        @media (max-width: 768px) {
-            
-                    .header h1 {
-            font-size: 2.2rem;
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-            
-            .container {
-                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            }
-
-            .channel-card img {
-             height: 130px;
-             scale: 0.9;
-        }
-      }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>LIVE TV WEB ⚡</h1>
-        <a href="https://t.me/rapid1action" class="header__telegram">
-          <img src="assets/tg.png" alt="Telegram" class="header__telegram-icon">
-          Join Telegram
-        </a>
-      </header>
+    <h1>Proxy Checker</h1>
+    <input type="text" id="name" placeholder="Enter your name">
+    
+    <select id="proxyType">
+        <option value="http">HTTP/HTTPS</option>
+        <option value="socks4">SOCKS4</option>
+        <option value="socks5">SOCKS5</option>
+    </select>
 
-    <div class="search-container">
-        <input id="search" type="search" placeholder="Search channels..."/>
-    </div>
+    <input type="text" id="url" placeholder="Enter the URL to check">
 
-    <div id="content">
-        <div class="container" id="tv_catalog"></div>
-    </div>
+    <input type="number" id="threads" value="5" placeholder="Enter number of threads">
 
-    <footer>
-        <a href="https://t.me/BERLIN_IS_BERLIN">Created by BERLIN</a>
-    </footer>
+    <button onclick="checkProxies()">Check Proxies</button>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <h2>Results:</h2>
+    <div id="result"></div>
+    
+    <a id="downloadLink" href="#" download="working_proxies.txt">Download Working Proxies</a>
+
     <script>
-        $(document).ready(function(){
-            load_tv_list();
-            $("#search").on("keyup", function() {
-                var value = $(this).val().toLowerCase();
-                $(".channel-card").filter(function() {
-                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        async function fetchProxies(proxyType) {
+            const response = await fetch(`https://api.proxyscrape.com/v2/?request=displayproxies&protocol=${proxyType}&timeout=10000&country=all&ssl=all&anonymity=all`);
+            if (response.ok) {
+                return await response.text().then(data => data.split('\n').filter(proxy => proxy));
+            } else {
+                throw new Error('Failed to fetch proxies');
+            }
+        }
+
+        async function checkProxies() {
+            const name = document.getElementById("name").value;
+            const proxyType = document.getElementById("proxyType").value;
+            const url = document.getElementById("url").value;
+            const threads = parseInt(document.getElementById("threads").value);
+            const resultDiv = document.getElementById("result");
+            const downloadLink = document.getElementById("downloadLink");
+
+            // Fetch proxies based on user selection
+            let proxies;
+            try {
+                proxies = await fetchProxies(proxyType);
+            } catch (error) {
+                resultDiv.innerHTML = `<span class="fail">Error: ${error.message}</span>`;
+                return;
+            }
+
+            let successCount = 0;
+            let failCount = 0;
+            let workingProxies = [];
+
+            // Clear results
+            resultDiv.innerHTML = "";
+            downloadLink.style.display = 'none';  // Hide download link initially
+
+            // Simulate checking all proxies
+            const promises = proxies.map((proxy) => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        // Simulate checking
+                        const isSuccess = Math.random() > 0.5; // Randomly determine success or failure
+                        if (isSuccess) {
+                            workingProxies.push(proxy);
+                            successCount++;
+                        } else {
+                            failCount++;
+                        }
+                        resolve();
+                    }, 1000 * (Math.random() + 0.5)); // Random delay for demonstration
                 });
             });
-        });
 
-        function load_tv_list() {
-            $.ajax({
-                "url": "api.php",
-                "type": "POST",
-                "data": "action=getChannels",
-                "success": function(data) {
-                    try { 
-                        data = JSON.parse(data);
-                    } catch(err) {}
-                    if(data.status == "success") {
-                        let html = '';
-                        $.each(data.data.list, function(k,v){
-                            html += `
-                                <div class="channel-card">
-                                    <a href="?watch=${v.id}" title="${v.title}">
-                                        <img class="lazyload" data-src="${v.logo}" alt="${v.title}"/>
-                                        <div class="channel-info">
-                                            <div class="channel-title">${v.title}</div>
-                                        </div>
-                                    </a>
-                                </div>
-                            `;
-                        });
-                        $("#tv_catalog").html(html);
-                        $("body").fadeIn();
-                    }
-                },
-                "error": function(data) {
-                    alert("Network Failed or Internal Server Error Occurred");
+            // Wait for all checks to complete
+            Promise.all(promises).then(() => {
+                // Update results
+                resultDiv.innerHTML = `
+                    Total SUCCESS: <span class="success">${successCount}</span><br>
+                    Total FAIL: <span class="fail">${failCount}</span>
+                `;
+
+                // Create a downloadable text file with working proxies
+                if (successCount > 0) {
+                    const blob = new Blob([workingProxies.join('\n')], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    downloadLink.href = url;
+                    downloadLink.style.display = 'inline';  // Show download link
+                } else {
+                    downloadLink.style.display = 'none';  // Hide if no working proxies
                 }
             });
         }
     </script>
 </body>
 </html>
-<!--  -->
-
