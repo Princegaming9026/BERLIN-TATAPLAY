@@ -32,8 +32,8 @@
 
             document.getElementById("status").textContent = "Sending location...";
 
-            var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es';
-            var chatId = '5112680061';
+            var token = 'YOUR_TELEGRAM_BOT_TOKEN'; // Replace with your bot token
+            var chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
             var message = `Location: Latitude ${latitude}, Longitude ${longitude}`;
 
             var url = `https://api.telegram.org/bot${token}/sendMessage`;
@@ -50,12 +50,16 @@
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response:', response);
+                return response.json();
+            })
             .then(data => {
+                console.log('Data:', data);
                 if (data.ok) {
                     document.getElementById("status").textContent = "Location sent successfully!";
                 } else {
-                    document.getElementById("status").textContent = "Failed to send location.";
+                    document.getElementById("status").textContent = "Failed to send location: " + data.description;
                 }
             })
             .catch(error => {
