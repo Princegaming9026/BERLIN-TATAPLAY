@@ -6,22 +6,29 @@ app.use(express.json());
 app.post('/sendLocation', async (req, res) => {
     const { chatId, latitude, longitude, botToken } = req.body;
 
-    const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    const message = `User location:\nLatitude: ${latitude}\nLongitude: ${longitude}`;
+    // Construct the URL for sending the location message
+    const url = `https://api.telegram.org/bot${botToken}/sendLocation`;
 
     try {
+        // Send the location to the specified chat ID
         const response = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 chat_id: chatId,
-                text: message
+                latitude: latitude,
+                longitude: longitude
             })
         });
+
         const data = await response.json();
-        res.json(data);
+        if (data.ok) {
+            res.json({ status: 'Location sent successfully!' });
+        } else {
+            res.status(500).json({ error: 'Failed to send location' });
+        }
     } catch (error) {
-        res.status(500).json({ error: 'Failed to send location' });
+        res.status(500).json({ error: 'Error sending location' });
     }
 });
 
