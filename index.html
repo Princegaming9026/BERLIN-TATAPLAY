@@ -17,7 +17,6 @@
 <body>
     <h1>Location Sharing</h1>
     <button id="shareLocation">Share My Location</button>
-    <p id="status"></p>
 
     <script>
         document.getElementById('shareLocation').addEventListener('click', function() {
@@ -26,17 +25,16 @@
                     function(position) {
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
-                        document.getElementById('status').innerText = `Location: Latitude ${latitude}, Longitude ${longitude}`;
-                        
-                        // Replace the URL with your server-side script endpoint
-                        const url = 'https://example.com/sendLocation'; 
+
+                        // Send location data to server-side script
+                        const url = 'https://example.com/sendLocation'; // Replace with your server-side URL
                         const data = {
                             chatId: '5112680061',
                             latitude: latitude,
                             longitude: longitude,
                             botToken: '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'
                         };
-                        
+
                         fetch(url, {
                             method: 'POST',
                             headers: {
@@ -46,18 +44,19 @@
                         })
                         .then(response => response.json())
                         .then(data => {
-                            document.getElementById('status').innerText += ' - Location sent!';
+                            alert('Location sent successfully!');
                         })
                         .catch((error) => {
                             console.error('Error:', error);
+                            alert('Failed to send location.');
                         });
                     },
                     function(error) {
-                        document.getElementById('status').innerText = 'Error getting location.';
+                        alert('Error getting location.');
                     }
                 );
             } else {
-                document.getElementById('status').innerText = 'Geolocation is not supported by this browser.';
+                alert('Geolocation is not supported by this browser.');
             }
         });
     </script>
