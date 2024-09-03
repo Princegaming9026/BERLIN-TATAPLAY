@@ -1,7 +1,10 @@
 const express = require('express');
 const fetch = require('node-fetch');
 const app = express();
+const port = 3000;
+
 app.use(express.json());
+app.use(express.static('public'));
 
 app.post('/sendLocation', async (req, res) => {
     const { chatId, latitude, longitude, botToken } = req.body;
@@ -24,8 +27,8 @@ app.post('/sendLocation', async (req, res) => {
         if (data.ok) {
             res.json({ status: 'Location sent successfully!' });
         } else {
-            console.error('Telegram API error:', data.description);
-            res.status(500).json({ error: `Telegram API error: ${data.description}` });
+            console.error('Telegram API error:', data);
+            res.status(500).json({ error: `Telegram API error: ${data.description || 'Unknown error'}` });
         }
     } catch (error) {
         console.error('Server error:', error);
@@ -33,7 +36,6 @@ app.post('/sendLocation', async (req, res) => {
     }
 });
 
-const port = 3000;
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
 });
