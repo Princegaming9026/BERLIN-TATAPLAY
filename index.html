@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Player</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        video {
+            width: 80%;
+            max-width: 800px;
+            border: 1px solid #ccc;
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<video controls>
+    <source src="https://tb-site-be.onrender.com/stream.m3u8?data=667763633646353171335a366b4d686265654c5157337932456c7770556c3159786768565473645a316e6b5639534e504834557235736565724e336854586a5469316e48766a49354e576d427173703058513777384447526b394141766d615962664c7370742f764843493d" type="application/x-mpegURL">
+    Your browser does not support the video tag.
+</video>
+
+<a href="https://tb-site-be.onrender.com/stream.m3u8?data=667763633646353171335a366b4d686265654c5157337932456c7770556c3159786768565473645a316e6b5639534e504834557235736565724e336854586a5469316e48766a49354e576d427173703058513777384447526b394141766d615962664c7370742f764843493d" download="video_playlist.m3u8">
+    <button>Download Video</button>
+</a>
+
+</body>
+</html>
