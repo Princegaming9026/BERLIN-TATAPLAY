@@ -31,20 +31,22 @@
             z-index: 999;
         }
 
-        /* Stylish Animated Glow */
-        @keyframes glow {
+        /* Blurry Text Animation (Small Area Only) */
+        @keyframes blurText {
             0%, 100% { 
-                text-shadow: 0 0 10px rgba(128, 0, 255, 0.5), 0 0 20px rgba(128, 0, 255, 0.8), 0 0 30px rgba(128, 0, 255, 1);
+                filter: blur(0px);
+                text-shadow: 0 0 10px rgba(128, 0, 255, 0.7);
             }
             50% { 
-                text-shadow: 0 0 20px rgba(128, 0, 255, 0.8), 0 0 40px rgba(128, 0, 255, 1), 0 0 50px rgba(128, 0, 255, 1);
+                filter: blur(5px);
+                text-shadow: 0 0 20px rgba(128, 0, 255, 1);
             }
         }
         
         .loading span {
             display: inline-block;
             color: #8000ff; /* Purple Neon */
-            animation: glow 1.5s infinite alternate;
+            animation: blurText 1.2s infinite alternate;
         }
         .loading span:nth-child(1) { animation-delay: 0s; }
         .loading span:nth-child(2) { animation-delay: 0.2s; }
@@ -57,6 +59,7 @@
         #videoContainer {
             width: 100%;
             height: 100vh;
+            display: none; /* Hide player initially */
         }
         video {
             width: 100%;
@@ -68,7 +71,7 @@
 
 <body>
 
-    <!-- Blurry Glow Loading Animation -->
+    <!-- Blurry Text Animation -->
     <div id="loading" class="loading">
         <span>M</span><span>A</span><span>D</span><span>A</span><span>R</span><span>A</span>
     </div>
@@ -100,9 +103,10 @@
             }
         }
 
-        // Hide loading screen after 3 seconds and start video
+        // Hide loading and show video after 3 sec
         setTimeout(() => {
             document.getElementById('loading').style.display = 'none';
+            document.getElementById('videoContainer').style.display = 'block';
             playMedia();
         }, 3000);
     </script>
