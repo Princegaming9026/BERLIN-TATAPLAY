@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Premium Player</title>
     <link rel="shortcut icon" href="https://i.postimg.cc/YC3Npf10/image.webp">
-    <link rel="stylesheet" href="Player.css">
     
     <style>
         /* Background Styling */
@@ -23,34 +22,29 @@
             position: fixed;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: transparent;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 3rem;
             font-weight: bold;
             z-index: 999;
-            text-shadow: 0 0 20px rgba(128, 0, 128, 0.8); /* Purple Glow */
         }
 
-        /* Stylish Blurry Animation */
-        @keyframes blurGlow {
+        /* Stylish Animated Glow */
+        @keyframes glow {
             0%, 100% { 
-                opacity: 0.2;
-                filter: blur(4px);
-                text-shadow: 0 0 10px rgba(128, 0, 128, 0.5), 0 0 30px rgba(128, 0, 128, 0.6);
+                text-shadow: 0 0 10px rgba(128, 0, 255, 0.5), 0 0 20px rgba(128, 0, 255, 0.8), 0 0 30px rgba(128, 0, 255, 1);
             }
             50% { 
-                opacity: 1;
-                filter: blur(1px);
-                text-shadow: 0 0 20px rgba(128, 0, 128, 0.8), 0 0 40px rgba(128, 0, 128, 1);
+                text-shadow: 0 0 20px rgba(128, 0, 255, 0.8), 0 0 40px rgba(128, 0, 255, 1), 0 0 50px rgba(128, 0, 255, 1);
             }
         }
         
         .loading span {
             display: inline-block;
-            color: #800080; /* Purple Color */
-            animation: blurGlow 1.5s infinite alternate;
+            color: #8000ff; /* Purple Neon */
+            animation: glow 1.5s infinite alternate;
         }
         .loading span:nth-child(1) { animation-delay: 0s; }
         .loading span:nth-child(2) { animation-delay: 0.2s; }
@@ -60,54 +54,53 @@
         .loading span:nth-child(6) { animation-delay: 1s; }
 
         /* Player Container */
-        #jwplayerDiv {
+        #videoContainer {
             width: 100%;
             height: 100vh;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            background: black;
         }
     </style>
 </head>
 
 <body>
-    <script src="https://cdn.jwplayer.com/libraries/SAHhwvZq.js"></script>
 
-    <!-- Blurry Purple Loading Animation -->
+    <!-- Blurry Glow Loading Animation -->
     <div id="loading" class="loading">
         <span>M</span><span>A</span><span>D</span><span>A</span><span>R</span><span>A</span>
     </div>
 
-    <div id="jwplayerDiv"></div>
+    <div id="videoContainer">
+        <video id="videoPlayer" controls autoplay></video>
+    </div>
+
+    <!-- HLS.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
     <script>
         function playMedia() {
             const queryParams = new URLSearchParams(window.location.search);
             const m3u8Link = queryParams.get('m3u8') || "http://link.luckonline.eu/live/0c:89:10:e8:1c:d4/869/505.m3u8"; // Default stream link
 
-            const playerInstance = jwplayer('jwplayerDiv').setup({
-                file: m3u8Link,
-                type: "hls",
-                autostart: true,
-                preload: "auto",
-                repeat: true,
-                mute: false,
-                stretching: "exactfit",
-                width: "100%",
-                height: "100vh",
-                cast: {},
-                setPip: true,
-                skin: {
-                    name: "Denver",
-                    active: "#FF0000",
-                    inactive: "#FFFFFF",
-                    background: "#000000"
-                }
-            });
+            const video = document.getElementById('videoPlayer');
 
-            playerInstance.on('ready', function () {
-                playerInstance.setFullscreen(true);
-            });
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(m3u8Link);
+                hls.attachMedia(video);
+                hls.on(Hls.Events.MANIFEST_PARSED, function () {
+                    video.play();
+                });
+            } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                video.src = m3u8Link;
+                video.play();
+            }
         }
 
-        // Hide loading screen after 3 seconds
+        // Hide loading screen after 3 seconds and start video
         setTimeout(() => {
             document.getElementById('loading').style.display = 'none';
             playMedia();
