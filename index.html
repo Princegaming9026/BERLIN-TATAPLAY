@@ -12,7 +12,7 @@
             margin: 0;
             background: radial-gradient(circle, #1a1a1a, #000000);
             color: white;
-            font-family: Arial, sans-serif;
+            font-family: "Poppins", sans-serif;
             text-align: center;
             overflow: hidden;
         }
@@ -26,34 +26,40 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
             z-index: 999;
         }
 
-        /* Blurry Text Animation (Small Area Only) */
+        /* Stylish Blurry Text Animation */
         @keyframes blurText {
             0%, 100% { 
                 filter: blur(0px);
-                text-shadow: 0 0 10px rgba(128, 0, 255, 0.7);
+                text-shadow: 0 0 15px rgba(128, 0, 255, 0.8);
+                transform: scale(1);
             }
             50% { 
                 filter: blur(5px);
-                text-shadow: 0 0 20px rgba(128, 0, 255, 1);
+                text-shadow: 0 0 30px rgba(128, 0, 255, 1);
+                transform: scale(1.2);
             }
         }
         
         .loading span {
             display: inline-block;
-            color: #8000ff; /* Purple Neon */
-            animation: blurText 1.2s infinite alternate;
+            color: #9C27B0; /* Purple Neon */
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: 15px;
+            text-transform: uppercase;
+            animation: blurText 1.5s infinite alternate;
         }
         .loading span:nth-child(1) { animation-delay: 0s; }
-        .loading span:nth-child(2) { animation-delay: 0.2s; }
-        .loading span:nth-child(3) { animation-delay: 0.4s; }
-        .loading span:nth-child(4) { animation-delay: 0.6s; }
-        .loading span:nth-child(5) { animation-delay: 0.8s; }
-        .loading span:nth-child(6) { animation-delay: 1s; }
+        .loading span:nth-child(2) { animation-delay: 0.3s; }
+        .loading span:nth-child(3) { animation-delay: 0.6s; }
+        .loading span:nth-child(4) { animation-delay: 0.9s; }
+        .loading span:nth-child(5) { animation-delay: 1.2s; }
+        .loading span:nth-child(6) { animation-delay: 1.5s; }
 
         /* Player Container */
         #videoContainer {
@@ -71,7 +77,7 @@
 
 <body>
 
-    <!-- Blurry Text Animation -->
+    <!-- Stylish Blurry Loading Animation -->
     <div id="loading" class="loading">
         <span>M</span><span>A</span><span>D</span><span>A</span><span>R</span><span>A</span>
     </div>
@@ -85,8 +91,7 @@
 
     <script>
         function playMedia() {
-            const queryParams = new URLSearchParams(window.location.search);
-            const m3u8Link = queryParams.get('m3u8') || "http://link.luckonline.eu/live/0c:89:10:e8:1c:d4/869/505.m3u8"; // Default stream link
+            const m3u8Link = "https://jcevents.jiocinema.com/bpk-tv/JC_Sports18_1HD/JCHLS/hdntl=exp=1740378932~acl=%2F*~id=aaf549ec51984c86b32dd7de3e1334c7~data=hdntl~hmac=6029ae6ff841ccbb41d820a46f0a255ad02a678707e7c6ad9a63bd546d3ee24d/JC_Sports18_1HD-audio_108038_eng=108000-video=2297600.m3u8";
 
             const video = document.getElementById('videoPlayer');
 
