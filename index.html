@@ -1,23 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Stream</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Player</title>
+  <link rel="shortcut icon" type="image/x-icon" href="https://i.postimg.cc/YC3Npf10/image.webp">
+   <link rel="stylesheet" href="Player.css">
 </head>
-<body>
-    <div class="container">
-        <h1>Live Stream</h1>
-        <video id="liveStream" controls>
-            <source src="https://cdn4504.hokpi334amve.com/stream2/i-cdn-0/e0cfb51d0484a3b1f09d013c6f8d5cbe/MJTMsp1RshGTygnMNRUR2N2MSlnWXZEdMNDZzQWe5MDZzMmdZJTO1R2RWVHZDljekhkSsl1VwYnWtx2cihVT2lFVOhWWt1UNNdVV1kVbVpXWq5EaPR0Z39ERFNTWq10dZpWTw0kaGhWWtVVP:1740057870:178.212.35.166:0119c088bc7e4e3be70ff4d5a6c6f92b523c2505ed82fb23ca0e3257bc46d3f7/720/index.m3u8" type="application/x-mpegURL">
-            Your browser does not support the video tag.
-        </video>
-        <div class="controls">
-            <button id="playBtn">Play</button>
-            <button id="pauseBtn">Pause</button>
-        </div>
+
+<body>  
+	<script src="https://cdn.jwplayer.com/libraries/SAHhwvZq.js"></script>
+<script> jwplayer.defaults = jwDefaults; </script>
+    <div id="jwplayerDiv"></div>
+    <script>
+        const queryParams = new URLSearchParams(window.location.search);
+        const mpdLink = queryParams.get('mpd');
+        const m3u8Link = queryParams.get('m3u8');
+        const keyId = queryParams.get('keyId');
+        const key = queryParams.get('key');
+
+        function playMedia() {
+            let playerConfig = {
+            	
+            skin: {
+       name: "Denver",
+       active: "RED", /* kuch bhi colour dalke experiment kro*/
+       inactive: "white",/* kuch bhi colour dalke experiment kro*/
+       background: "black"/* kuch bhi colour dalke experiment kro*/
+    },
+                "autostart": true,
+                "preload": "none",
+                "repeat": true,
+                "Volume": "100",
+                "mute": false,
+                "stretching": "exactfit",
+                "width": "100%",
+                "cast": {},
+                "setPip": false
+            };
+
+            if (mpdLink) {
+                playerConfig = {
+                    ...playerConfig,
+                    file: mpdLink,
+                    type: "dash",
+                    drm: {
+                        clearkey: {
+                            key: key,
+                            keyId: keyId
+                        }
+                    }
+                };
+            } else if (m3u8Link) {
+                playerConfig = {
+                    ...playerConfig,
+                    file: m3u8Link,
+                    type: "hls",
+                    drm: {}
+                };
+            }
+
+            const playerInstance = jwplayer('jwplayerDiv').setup(playerConfig);
+        }
+
+        window.onload = playMedia;
+    </script>
+<div id="loading" class="loading">
+    <div class="loading-text">
+      <span class="loading-text-words">M</span>
+      <span class="loading-text-words">A</span>
+      <span class="loading-text-words">D</span>
+      <span class="loading-text-words">A</span>
+      <span class="loading-text-words">R</span>
+      <span class="loading-text-words">A</span>
+      <span class="loading-text-words"></span>
     </div>
-    <script src="script.js"></script>
+</div>
+
+<script>
+setTimeout(videovisible, 5000)
+function videovisible() {
+    document.getElementById('loading').style.display = 'none'
+}
+</script> 
+
 </body>
 </html>
