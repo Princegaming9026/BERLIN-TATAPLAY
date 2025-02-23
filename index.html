@@ -26,7 +26,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 4rem;
+            font-size: 3rem; /* 25% Smaller */
             font-weight: bold;
             z-index: 999;
         }
@@ -35,22 +35,22 @@
         @keyframes blurText {
             0%, 100% { 
                 filter: blur(0px);
-                text-shadow: 0 0 15px rgba(128, 0, 255, 0.8);
+                text-shadow: 0 0 10px rgba(128, 0, 255, 0.8);
                 transform: scale(1);
             }
             50% { 
-                filter: blur(5px);
-                text-shadow: 0 0 30px rgba(128, 0, 255, 1);
-                transform: scale(1.2);
+                filter: blur(3px);
+                text-shadow: 0 0 20px rgba(128, 0, 255, 1);
+                transform: scale(1.1);
             }
         }
         
         .loading span {
             display: inline-block;
             color: #9C27B0; /* Purple Neon */
-            font-size: 5rem;
+            font-size: 3.5rem; /* 25% Smaller */
             font-weight: 900;
-            letter-spacing: 15px;
+            letter-spacing: 12px;
             text-transform: uppercase;
             animation: blurText 1.5s infinite alternate;
         }
